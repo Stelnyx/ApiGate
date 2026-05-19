@@ -33,4 +33,14 @@ t.test("Controller root with subpath joins correctly", () => {
   if (!e) throw new Error("DELETE /users/:id missing");
 });
 
+t.test("@Controller({ path, version }) object form resolves the path", () => {
+  const e = endpoints.find(x => x.method === "GET" && x.path === "/auth/me");
+  if (!e) throw new Error("GET /auth/me from object-form controller missing");
+});
+
+t.test("@Controller([...]) array form resolves first path", () => {
+  const e = endpoints.find(x => x.method === "GET" && x.path === "/v2/items/:id");
+  if (!e) throw new Error("GET /v2/items/:id from array-form controller missing");
+});
+
 t.finish();
