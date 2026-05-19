@@ -1,5 +1,8 @@
 node_modules
 
+# Build artifacts
+*.tgz
+
 # In-place scan artifacts at repo root (samples/** is tracked explicitly)
 /apigate-report.json
 /*.html
