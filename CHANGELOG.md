@@ -6,7 +6,27 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) + [Semantic Ver
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-05-20
+## [0.2.1] - 2026-05-20
+
+### Fixed
+- HTML table cells (Path, Location) overflowed the viewport when long
+  file paths contained no break characters (e.g.
+  `src/auth/auth.controller.ts:50`). Path and Location `<code>` elements
+  now use `word-break: break-all`, and every report table (endpoints,
+  drift, refDiff, unknownReasons, parserCapabilities) is wrapped in an
+  `overflow-x: auto` container so ultra-wide rows degrade to horizontal
+  scroll instead of bleeding off the page.
+- Surfaced via slstudio dogfood: 427-endpoint NestJS scan, `.ts` paths
+  with no hyphens did not wrap. Determinism preserved — both fixes are
+  constant template-literal attributes.
+
+### Notes
+- `v0.2.0` was tagged in git but never published to npm because of the
+  overflow bug above. The registry goes `0.1.2 → 0.2.1`. All `v0.2.0`
+  feature work (`--diff`, risk tier, `--filter`, `--explain`, layout
+  reorder, vanilla JS) is included in `v0.2.1`.
+
+## [0.2.0] - 2026-05-20 *(unreleased — never published to npm)*
 
 ### Added
 - **`--diff <ref>` flag — PR-aware scanning.** Spins a detached git worktree
