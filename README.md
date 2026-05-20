@@ -399,7 +399,7 @@ Each run writes:
 
 ```json
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "rubricVersion": "v1",
   "riskVersion": "v1",
   "timestamp": "ISO 8601",
@@ -470,15 +470,22 @@ Each run writes:
 }
 ```
 
-### New keys in v0.2.0
+### Keys by version
 
-| Key                          | Why                                                                                          |
-|------------------------------|----------------------------------------------------------------------------------------------|
-| `refDiff{}`                  | PR-aware diff vs a git ref. Surfaces added/removed endpoints + posture/risk regressions.     |
-| `endpoints[].risk` / `riskReason` | Per-endpoint HIGH/MED/LOW tier. Triage aid. Frozen v1 ladder; `severityOverrides` config to pin. |
-| `summary.risk{}`             | HIGH/MED/LOW counts. New score-hero sub-line and KPI tiles surface these.                    |
-| `riskTier{}` + `riskVersion` | Rubric version of the risk ladder that produced the tiers.                                   |
-| `filter`                     | The filter expression in effect (view-only — `summary` always reflects the full scan).       |
+| Added in | Key | Why |
+|---|---|---|
+| 0.1.2 | `gate.reasons[]` | Enum-locked list of gates that fired. CI grep target. |
+| 0.1.2 | `endpoints[].matchedAuthMarker` | First declared identifier that triggered a GUARDED classification. |
+| 0.1.2 | `summary.unknownReasons{}` | Per-`unresolvedReason` counts. |
+| 0.1.2 | `parserCapabilities{}` | Frozen matrix of what each parser sees vs. leaves unresolved. |
+| 0.2.0 | `refDiff{}` | PR-aware diff vs a git ref. Surfaces added / removed / changedPosture / changedRisk. |
+| 0.2.0 | `endpoints[].risk` / `riskReason` | Per-endpoint HIGH/MED/LOW tier. Frozen v1 ladder. |
+| 0.2.0 | `summary.risk{}` | HIGH/MED/LOW counts. |
+| 0.2.0 | `riskTier{}` + `riskVersion` | Rubric version of the risk ladder. |
+| 0.2.0 | `filter` | The filter expression in effect (view-only). |
+| 0.3.0 | `parserCapabilities.nest.methodDecoratorsBelowAnchor` | Now `true` — bidirectional decorator scan captures markers above AND below `@Get`/`@Post`. |
+| 0.3.0 | `parserCapabilities.nest.globalGuardDetection` | Documented as `NOT DETECTED` — NestJS `APP_GUARD` / `useGlobalGuards` providers are invisible. Use `auth.nest` overrides or `severityOverrides`. |
+| 0.3.0 | LIMITATIONS entry #7 | Global-guard blind spot disclosed in every printed report. |
 
 ### Posture tiers
 
