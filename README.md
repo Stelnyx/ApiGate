@@ -26,7 +26,7 @@ One command. One report. One exit code.
 
 **Honest positioning.** ApiGate is a **surface auditor**, not a runtime scanner and not a DAST tool. The report explicitly states what a static analysis CAN and CANNOT prove — it's a printed trust feature, not a footnote. ApiGate cannot verify runtime authorization (BOLA / object-level access). It can prove that an endpoint declares a guard. It cannot prove the guard is correct. See [What this does NOT prove](#what-this-does-not-prove).
 
-**Status.** Early release (`v0.1.2`). Published with [npm provenance](https://docs.npmjs.com/generating-provenance-statements). Report vulnerabilities via [SECURITY.md](SECURITY.md).
+**Status.** Early release (`v0.2.0`). Published with [npm provenance](https://docs.npmjs.com/generating-provenance-statements). Report vulnerabilities via [SECURITY.md](SECURITY.md).
 
 **Accuracy contract.** ApiGate's parsing + scoring pipeline is deterministic — same inputs produce JSON- and HTML-byte-identical reports across every run. Three test suites lock the contract:
 
@@ -195,8 +195,20 @@ apigate . --format html
 # Show parser warnings
 apigate . --debug
 
+# PR-aware: did this branch introduce a new unauthenticated route?
+apigate . --diff main
+
+# Narrow the visible endpoint table (view-only — does not affect exit code)
+apigate . --filter risk=HIGH,posture=OPEN
+
+# Print one endpoint's evidence chain (no files written, exit 0)
+apigate . --explain GET /audit/security-events
+
 # Tighten the gate at CI time without editing .apigate.config.json
-apigate . --fail-on open-write,unknown,drift,missing-spec
+apigate . --fail-on open-write,unknown,drift,missing-spec,new-open-write
+
+# Byte-stable timestamp for CI (matches SOURCE_DATE_EPOCH convention)
+APIGATE_TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)" apigate .
 
 # Version / help
 apigate --version
@@ -212,9 +224,22 @@ apigate --help
 | `unknown`            | `failOn.unknown          = true`         |
 | `drift`              | `failOn.drift            = true`         |
 | `intentional-public` | `failOn.intentionalPublic = true`        |
+| `new-open-write`     | `failOn.newOpenWrite     = true` (needs `--diff`) |
 | `missing-spec`       | `requireSpec             = true`         |
 
 Unknown tokens throw — CI typos can never silently relax policy.
+
+**`--filter` grammar:**
+
+```
+key=value
+key=v1|v2          # OR within a key
+key1=v1,key2=v2    # AND across keys
+```
+
+Keys: `risk` (HIGH|MED|LOW), `posture` (GUARDED|OPEN|UNKNOWN), `framework`
+(express|fastify|nest|openapi), `method` (any HTTP verb), `changed`
+(added|removed|changedPosture|changedRisk — requires `--diff`).
 
 **Exit codes**
 
@@ -363,15 +388,16 @@ Each run writes:
 
 ```json
 {
-  "version": "0.1.2",
+  "version": "0.2.0",
   "rubricVersion": "v1",
+  "riskVersion": "v1",
   "timestamp": "ISO 8601",
   "target": "/absolute/path or repo basename",
   "mode": "static",
   "status": "PASS | FAIL",
   "gate": {
     "status": "PASS | FAIL",
-    "reasons": ["drift", "intentional-public", "missing-spec", "open-read", "open-write", "unknown-endpoint"]
+    "reasons": ["drift", "intentional-public", "missing-spec", "new-open-write", "open-read", "open-write", "unknown-endpoint"]
   },
   "headlineScore": 86,
   "rubrics": {
@@ -384,6 +410,7 @@ Each run writes:
   "summary": {
     "endpoints": 7, "resolved": 6, "unresolved": 1,
     "guarded": 4, "open": 2, "unknown": 1, "intentionalPublic": 0,
+    "risk": { "HIGH": 1, "MED": 2, "LOW": 4 },
     "specEndpoints": 6, "shadow": 1, "stale": 1, "authDrift": 0,
     "unknownReasons": { "mount-prefix-not-static": 1 }
   },
@@ -399,6 +426,8 @@ Each run writes:
       "intentionalPublic": false,
       "authMarkers": ["requireAuth"],
       "matchedAuthMarker": "requireAuth",
+      "risk": "HIGH | MED | LOW",
+      "riskReason": "open write method",
       "unresolvedReason": null
     }
   ],
@@ -407,27 +436,38 @@ Each run writes:
     "stale":     [{ "kind": "stale",   "method": "GET",  "path": "/y", "note": "..." }],
     "authDrift": [{ "kind": "authDriftDeclaredOnly", "method": "PUT", "path": "/z", "note": "..." }]
   },
+  "refDiff": {
+    "baseRef": "main",
+    "baseSha": "abc12345...",
+    "added":           [{ "method": "POST", "path": "/admin/purge", "posture": "OPEN", "risk": "HIGH" }],
+    "removed":         [],
+    "changedPosture":  [{ "method": "PUT", "path": "/x", "from": "GUARDED", "to": "OPEN" }],
+    "changedRisk":     [{ "method": "POST", "path": "/y", "from": "MED", "to": "HIGH" }]
+  },
   "frameworksDetected": ["express", "openapi"],
   "specsDetected": ["openapi.yaml"],
   "parserCapabilities": {
     "express":  { "sameFileMountPrefix": true, "crossFileMountPrefix": false, "dynamicMountPrefix": "UNRESOLVED" },
     "fastify":  { "registerPrefixPropagation": false, "routeOptionsParsed": true },
-    "nest":     { "controllerObjectArg": "path field only (version segment ignored)", "classLevelGuards": true },
+    "nest":     { "controllerObjectArg": "path field only", "classLevelGuards": true },
     "openapi":  { "missingSecurity": "UNKNOWN (conservative)", "operationSecurityEmptyArray": "OPEN" }
   },
+  "riskTier": { "version": "v1", "sensitivePathTokens": 9, "buckets": ["HIGH","MED","LOW"], "overrideHook": "config.severityOverrides" },
+  "filter": "risk=HIGH,posture=OPEN",
   "warnings": [],
   "limitations": ["..."]
 }
 ```
 
-### New keys in v0.1.2
+### New keys in v0.2.0
 
 | Key                          | Why                                                                                          |
 |------------------------------|----------------------------------------------------------------------------------------------|
-| `gate.reasons[]`             | Enum-locked list of gates that fired. CI can grep this directly instead of parsing stdout.   |
-| `endpoints[].matchedAuthMarker` | First declared identifier that triggered a GUARDED classification. Reviewable trust signal. |
-| `summary.unknownReasons{}`   | Per-`unresolvedReason` counts. Turns "low inventory" into actionable triage.                  |
-| `parserCapabilities{}`       | Frozen matrix of what each parser sees vs. intentionally leaves unresolved. The honesty contract, machine-readable. |
+| `refDiff{}`                  | PR-aware diff vs a git ref. Surfaces added/removed endpoints + posture/risk regressions.     |
+| `endpoints[].risk` / `riskReason` | Per-endpoint HIGH/MED/LOW tier. Triage aid. Frozen v1 ladder; `severityOverrides` config to pin. |
+| `summary.risk{}`             | HIGH/MED/LOW counts. New score-hero sub-line and KPI tiles surface these.                    |
+| `riskTier{}` + `riskVersion` | Rubric version of the risk ladder that produced the tiers.                                   |
+| `filter`                     | The filter expression in effect (view-only — `summary` always reflects the full scan).       |
 
 ### Posture tiers
 

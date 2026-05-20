@@ -1,15 +1,14 @@
 {
-  "version": "0.1.2",
+  "version": "0.2.0",
   "rubricVersion": "v1",
-  "timestamp": "2026-05-19T00:00:00.000Z",
+  "riskVersion": "v1",
+  "timestamp": "2026-05-20T00:00:00.000Z",
   "target": "realworld-express",
   "mode": "static",
-  "status": "FAIL",
+  "status": "PASS",
   "gate": {
-    "status": "FAIL",
-    "reasons": [
-      "intentional-public"
-    ]
+    "status": "PASS",
+    "reasons": []
   },
   "headlineScore": 100,
   "rubrics": {
@@ -27,6 +26,11 @@
     "open": 3,
     "unknown": 0,
     "intentionalPublic": 3,
+    "risk": {
+      "HIGH": 0,
+      "MED": 0,
+      "LOW": 20
+    },
     "specEndpoints": 0,
     "shadow": 0,
     "stale": 0,
@@ -53,7 +57,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "DELETE",
@@ -73,7 +79,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "DELETE",
@@ -95,7 +103,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "DELETE",
@@ -117,7 +127,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -139,7 +151,9 @@
       "unresolvedReason": null,
       "posture": "OPEN",
       "matchedAuthMarker": null,
-      "intentionalPublic": true
+      "intentionalPublic": true,
+      "risk": "LOW",
+      "riskReason": "intentional-public heuristic"
     },
     {
       "method": "GET",
@@ -160,7 +174,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "optional",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -182,7 +198,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "optional",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -204,7 +222,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "optional",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -225,7 +245,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -247,7 +269,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "optional",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -267,7 +291,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "optional",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "GET",
@@ -286,7 +312,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "POST",
@@ -307,7 +335,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "POST",
@@ -330,7 +360,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "POST",
@@ -352,7 +384,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "POST",
@@ -374,7 +408,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "POST",
@@ -392,7 +428,9 @@
       "unresolvedReason": null,
       "posture": "OPEN",
       "matchedAuthMarker": null,
-      "intentionalPublic": true
+      "intentionalPublic": true,
+      "risk": "LOW",
+      "riskReason": "intentional-public heuristic"
     },
     {
       "method": "POST",
@@ -409,7 +447,9 @@
       "unresolvedReason": null,
       "posture": "OPEN",
       "matchedAuthMarker": null,
-      "intentionalPublic": true
+      "intentionalPublic": true,
+      "risk": "LOW",
+      "riskReason": "intentional-public heuristic"
     },
     {
       "method": "PUT",
@@ -432,7 +472,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     },
     {
       "method": "PUT",
@@ -452,7 +494,9 @@
       "unresolvedReason": null,
       "posture": "GUARDED",
       "matchedAuthMarker": "required",
-      "intentionalPublic": false
+      "intentionalPublic": false,
+      "risk": "LOW",
+      "riskReason": "declared guard present"
     }
   ],
   "drift": {
@@ -502,12 +546,23 @@
       "basePathOas2": true
     }
   },
+  "riskTier": {
+    "version": "v1",
+    "sensitivePathTokens": 9,
+    "buckets": [
+      "HIGH",
+      "MED",
+      "LOW"
+    ],
+    "overrideHook": "config.severityOverrides"
+  },
   "warnings": [],
   "limitations": [
     "Static analysis cannot verify runtime authorization (BOLA / object-level access). ApiGate only inspects declared auth posture, not the correctness of the auth middleware itself.",
     "An endpoint with a declared auth identifier in its middleware chain is classified GUARDED — the middleware may still be misconfigured, bypassable, or insecure at runtime.",
     "Routes mounted via dynamic strings (computed prefixes, runtime registration, factory functions) are reported as UNRESOLVED rather than guessed.",
     "ApiGate uses a built-in heuristic pattern list to mark common public-auth paths (login / signup / refresh / health / OAuth callbacks) as INTENTIONAL-PUBLIC. The heuristic is deterministic and configurable but can be wrong both ways — review the marked endpoints and override `publicAuthPatterns` in `.apigate.config.json` if your project disagrees.",
+    "The per-endpoint `risk` tier (HIGH / MED / LOW) is a heuristic — pattern-based, frozen at `riskTier.version`. Use `severityOverrides` to pin specific endpoints. Risk is a triage aid, not a runtime exploitability claim.",
     "ApiGate makes ZERO network calls. It does not send code, telemetry, or scan artifacts anywhere. Reports are written to local files only."
   ]
 }

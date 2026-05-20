@@ -250,25 +250,24 @@ code, .mono { font-family: var(--mono); font-size: 13px; }
     
     <div class="pill-row"><span class="report-pill">API REPORT</span></div>
     <div class="aside-head">
-      <div class="product">ApiGate Report<span class="tier-pill warn">FAIL</span></div>
+      <div class="product">ApiGate Report<span class="tier-pill pass">PASS</span></div>
       <div class="target">realworld-express</div>
       <div class="score-line">
         <span class="score-num">100</span>
         <span class="score-denom">/ 100</span>
-        <span class="score-badge warn">FAIL</span>
+        <span class="score-badge pass">PASS</span>
       </div>
       <div class="report-type">API · STRONG</div>
     </div>
     <nav class="aside-nav">
       <h6>Report</h6>
       <a href="#overview" class="active">Overview <span class="count">·</span></a>
-      <a href="#gate">Gate <span class="count">1</span></a>
-      <a href="#rubrics">Rubrics <span class="count">5</span></a>
       <a href="#endpoints">Endpoints <span class="count">20</span></a>
+      <a href="#rubrics">Rubrics <span class="count">5</span></a>
       <a href="#parser-capabilities">Parser capabilities <span class="count">·</span></a>
       <a href="#limitations">Limitations <span class="count">·</span></a>
     </nav>
-    <div class="aside-footer">API Surface Report · v0.1.2 · 2026-05-19T00:00:00.000Z</div>
+    <div class="aside-footer">API Surface Report · v0.2.0 · 2026-05-20T00:00:00.000Z</div>
   </aside>
 
   <main class="main">
@@ -279,41 +278,47 @@ code, .mono { font-family: var(--mono); font-size: 13px; }
   <svg class="gauge" viewBox="0 0 100 100">
     <circle class="gauge-ring gauge-bg" cx="50" cy="50" r="42" />
     <circle class="gauge-ring gauge-fill" cx="50" cy="50" r="42"
-      stroke-dasharray="263.9" stroke-dashoffset="0.00" style="stroke: var(--warn)" />
+      stroke-dasharray="263.9" stroke-dashoffset="0.00" />
   </svg>
   <div class="info">
     <div class="label">Headline</div>
     <div class="num">100<small>/ 100  STRONG</small></div>
-    <div class="sub">17 guarded · 3 open · 0 unknown · status FAIL</div>
+    <div class="sub">0 HIGH · 0 MED · 20 LOW · status PASS</div>
   </div>
-  <div class="desc">ApiGate inventories every HTTP endpoint, classifies auth posture (GUARDED / OPEN / UNKNOWN), and diffs the surface against any declared OpenAPI spec. 100% static — no network, no credentials, deterministic.</div>
+  <div class="desc">ApiGate inventories every HTTP endpoint, classifies auth posture (GUARDED / OPEN / UNKNOWN), assigns a risk tier per endpoint, and diffs the surface against any declared OpenAPI spec. 100% static — no network, no credentials, deterministic.</div>
 </div>
-      <div class="kpis"><div class="kpi"><div class="label">Endpoints</div><div class="value">20</div></div><div class="kpi low"><div class="label">Guarded</div><div class="value">17</div></div><div class="kpi high"><div class="label">Open</div><div class="value">3</div></div><div class="kpi low"><div class="label">Public</div><div class="value">3</div></div><div class="kpi med"><div class="label">Unknown</div><div class="value">0</div></div><div class="kpi low"><div class="label">Shadow</div><div class="value">0</div></div><div class="kpi low"><div class="label">Stale</div><div class="value">0</div></div></div>
+      <div class="kpis"><div class="kpi"><div class="label">Endpoints</div><div class="value">20</div></div><div class="kpi low"><div class="label">HIGH risk</div><div class="value">0</div></div><div class="kpi low"><div class="label">MED risk</div><div class="value">0</div></div><div class="kpi low"><div class="label">Guarded</div><div class="value">17</div></div><div class="kpi high"><div class="label">Open</div><div class="value">3</div></div><div class="kpi med"><div class="label">Unknown</div><div class="value">0</div></div><div class="kpi low"><div class="label">Shadow</div><div class="value">0</div></div><div class="kpi low"><div class="label">Stale</div><div class="value">0</div></div></div>
     </section>
 
-    <section id="gate" style="padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-top:12px">
-    <h3 style="margin:0 0 6px">Gate reasons</h3>
-    <p style="color:var(--muted);font-size:13px;margin:0 0 8px">CI exit-1 fired on the following deterministic, enum-locked reasons:</p>
-    <ul style="font-size:13px;line-height:1.7;padding-left:20px;margin:0"><li><code>intentional-public</code></li></ul>
-  </section>
+    
+
+    
+
+    <section id="endpoints">
+      <h2>Endpoint inventory <span class="lead">20 of 20 · sorted risk DESC, then method/path</span></h2>
+      
+      <div style="display:flex;align-items:center;gap:12px;margin:8px 0 10px">
+    <input id="endpoint-filter" type="text" placeholder="Type to filter rows…" style="flex:1;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px" />
+    <span id="endpoint-filter-count" style="color:var(--muted);font-size:12px">20 / 20 visible</span>
+  </div>
+      <table class="findings-table"><thead><tr><th>Method</th><th>Path</th><th>Framework</th><th>Risk</th><th>Posture</th><th>Marker / Reason</th><th>Location</th></tr></thead><tbody><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:129</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug/comments/:id</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:190</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug/favorite</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:230</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/profiles/:username/follow</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/profile/profile.controller.ts:54</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/main.ts:21</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:30</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:87</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/:slug/comments</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:149</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/feed</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:45</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/profiles/:username</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/profile/profile.controller.ts:14</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/tags</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/tag/tag.controller.ts:13</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/user</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/auth/auth.controller.ts:45</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:71</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles/:slug/comments</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:170</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles/:slug/favorite</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:210</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/profiles/:username/follow</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/profile/profile.controller.ts:34</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/users</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/app/routes/auth/auth.controller.ts:14</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/users/login</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/app/routes/auth/auth.controller.ts:30</code></td></tr><tr><td><span class="pill high">PUT</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:110</code></td></tr><tr><td><span class="pill high">PUT</span></td><td><code>/user</code></td><td>express</td><td><span class="pill low">LOW</span></td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/auth/auth.controller.ts:61</code></td></tr></tbody></table>
+    </section>
+
+    
 
     <section id="rubrics">
       <h2>Rubrics <span class="lead">five 0–100 scores · headline = arithmetic mean of non-null rubrics</span></h2>
       <div class="bars"><div class="bar-row"><span class="name">Inventory Resolved</span><span class="score">100</span><div class="track"><div class="fill" style="width: 100%"></div></div><span class="weight"></span></div><div class="bar-row"><span class="name">Auth Coverage</span><span class="score">100</span><div class="track"><div class="fill" style="width: 100%"></div></div><span class="weight"></span></div><div class="bar-row"><span class="name">Open Endpoint Risk</span><span class="score">100</span><div class="track"><div class="fill" style="width: 100%"></div></div><span class="weight"></span></div><div class="bar-row"><span class="name">Spec Drift</span><span class="score">n/a</span><div class="track"><div class="fill med" style="width: 0%"></div></div><span class="weight">no spec</span></div><div class="bar-row"><span class="name">Determinism</span><span class="score">100</span><div class="track"><div class="fill" style="width: 100%"></div></div><span class="weight"></span></div></div>
     </section>
 
-    <section id="endpoints">
-      <h2>Endpoint inventory <span class="lead">20 discovered · sorted method/path</span></h2>
-      <table class="findings-table"><thead><tr><th>Method</th><th>Path</th><th>Framework</th><th>Posture</th><th>Marker / Reason</th><th>Location</th></tr></thead><tbody><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:129</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug/comments/:id</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:190</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/articles/:slug/favorite</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:230</code></td></tr><tr><td><span class="pill high">DELETE</span></td><td><code>/profiles/:username/follow</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/profile/profile.controller.ts:54</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/</code></td><td>express</td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/main.ts:21</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:30</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:87</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/:slug/comments</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/article/article.controller.ts:149</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/articles/feed</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:45</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/profiles/:username</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/profile/profile.controller.ts:14</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/tags</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">optional</code></td><td><code>src/app/routes/tag/tag.controller.ts:13</code></td></tr><tr><td><span class="pill low">GET</span></td><td><code>/user</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/auth/auth.controller.ts:45</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:71</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles/:slug/comments</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:170</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/articles/:slug/favorite</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:210</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/profiles/:username/follow</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/profile/profile.controller.ts:34</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/users</code></td><td>express</td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/app/routes/auth/auth.controller.ts:14</code></td></tr><tr><td><span class="pill high">POST</span></td><td><code>/users/login</code></td><td>express</td><td><span class="pill high">OPEN</span> <span class="pill low" title="Matched a built-in public-auth pattern (login/signup/refresh/health/...). Heuristic — see Limitations.">PUBLIC</span></td><td><span style="color:var(--faint)">—</span></td><td><code>src/app/routes/auth/auth.controller.ts:30</code></td></tr><tr><td><span class="pill high">PUT</span></td><td><code>/articles/:slug</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/article/article.controller.ts:110</code></td></tr><tr><td><span class="pill high">PUT</span></td><td><code>/user</code></td><td>express</td><td><span class="pill low">GUARDED</span></td><td><code title="The first declared auth identifier that matched this endpoint's middleware/decorator chain. Check .apigate.config.json &gt; auth if it looks wrong.">required</code></td><td><code>src/app/routes/auth/auth.controller.ts:61</code></td></tr></tbody></table>
-    </section>
-
     
 
-    
+    <hr style="border:none;border-top:1px solid var(--border);margin:32px 0 18px" />
+    <p style="color:var(--faint);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin:0 0 12px">Trust / audit material</p>
 
     <section id="parser-capabilities">
       <h2>Parser capabilities <span class="lead">what each parser sees and what it intentionally does not</span></h2>
-      <p style="color:var(--muted);font-size:13px;margin:0 0 8px">The honesty contract, machine-readable. This matrix is frozen at the published apigate version (<code>0.1.2</code>) and the same data is in the JSON report under <code>parserCapabilities</code>.</p>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 8px">The honesty contract, machine-readable. This matrix is frozen at the published apigate version (<code>0.2.0</code>) and the same data is in the JSON report under <code>parserCapabilities</code>.</p>
       <table class="findings-table"><thead><tr><th>Parser</th><th>Capability</th><th>Behavior</th></tr></thead><tbody><tr><td><span class="pill med">express</span></td><td><code>crossFileMountPrefix</code></td><td><span class="pill high">no</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>dynamicMountPrefix</code></td><td><span style="color:var(--muted);font-size:12px">UNRESOLVED</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>httpMethods</code></td><td><span style="color:var(--muted);font-size:12px">get/post/put/delete/patch/head/options/all</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>language</code></td><td><span style="color:var(--muted);font-size:12px">js, mjs, cjs (AST) · ts, tsx (regex fallback)</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>middlewareIdentifierExtraction</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>sameFileMountPrefix</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">express</span></td><td><code>typeScriptAst</code></td><td><span class="pill high">no</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>httpMethods</code></td><td><span style="color:var(--muted);font-size:12px">get/post/put/delete/patch/head/options + fastify.route()</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>language</code></td><td><span style="color:var(--muted);font-size:12px">js, mjs, cjs (AST only)</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>preHandlerIdentifierExtraction</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>registerPrefixPropagation</code></td><td><span class="pill high">no</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>routeOptionsParsed</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">fastify</span></td><td><code>typeScriptAst</code></td><td><span class="pill high">no</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>classLevelGuards</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>controllerArrayArg</code></td><td><span style="color:var(--muted);font-size:12px">first path only</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>controllerObjectArg</code></td><td><span style="color:var(--muted);font-size:12px">path field only (version segment ignored)</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>controllerStringArg</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>dynamicDecoratorArg</code></td><td><span style="color:var(--muted);font-size:12px">UNRESOLVED</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>httpMethods</code></td><td><span style="color:var(--muted);font-size:12px">@Get/@Post/@Put/@Patch/@Delete/@Options/@Head/@All</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>language</code></td><td><span style="color:var(--muted);font-size:12px">ts, tsx, js, mjs (regex extractor — no full TS AST)</span></td></tr><tr><td><span class="pill med">nest</span></td><td><code>methodLevelGuards</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>basePathOas2</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>language</code></td><td><span style="color:var(--muted);font-size:12px">yaml, yml, json</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>missingSecurity</code></td><td><span style="color:var(--muted);font-size:12px">UNKNOWN (conservative)</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>operationSecurity</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>operationSecurityEmptyArray</code></td><td><span style="color:var(--muted);font-size:12px">OPEN</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>rootSecurity</code></td><td><span class="pill low">yes</span></td></tr><tr><td><span class="pill med">openapi</span></td><td><code>specVersions</code></td><td><span style="color:var(--muted);font-size:12px">OpenAPI 2.0 (swagger:) and 3.x (openapi:)</span></td></tr></tbody></table>
     </section>
 
@@ -322,8 +327,96 @@ code, .mono { font-family: var(--mono); font-size: 13px; }
     <p style="color:var(--muted);font-size:13px;margin-top:4px">
       ApiGate is a deterministic, static surface auditor. The points below are not footnotes — they are the contract of what a static report can and cannot tell you. Read them every time.
     </p>
-    <ol style="color:var(--text);font-size:13px;line-height:1.7;padding-left:20px;margin-top:12px"><li style="margin-bottom:8px">Static analysis cannot verify runtime authorization (BOLA / object-level access). ApiGate only inspects declared auth posture, not the correctness of the auth middleware itself.</li><li style="margin-bottom:8px">An endpoint with a declared auth identifier in its middleware chain is classified GUARDED — the middleware may still be misconfigured, bypassable, or insecure at runtime.</li><li style="margin-bottom:8px">Routes mounted via dynamic strings (computed prefixes, runtime registration, factory functions) are reported as UNRESOLVED rather than guessed.</li><li style="margin-bottom:8px">ApiGate uses a built-in heuristic pattern list to mark common public-auth paths (login / signup / refresh / health / OAuth callbacks) as INTENTIONAL-PUBLIC. The heuristic is deterministic and configurable but can be wrong both ways — review the marked endpoints and override `publicAuthPatterns` in `.apigate.config.json` if your project disagrees.</li><li style="margin-bottom:8px">ApiGate makes ZERO network calls. It does not send code, telemetry, or scan artifacts anywhere. Reports are written to local files only.</li></ol>
+    <ol style="color:var(--text);font-size:13px;line-height:1.7;padding-left:20px;margin-top:12px"><li style="margin-bottom:8px">Static analysis cannot verify runtime authorization (BOLA / object-level access). ApiGate only inspects declared auth posture, not the correctness of the auth middleware itself.</li><li style="margin-bottom:8px">An endpoint with a declared auth identifier in its middleware chain is classified GUARDED — the middleware may still be misconfigured, bypassable, or insecure at runtime.</li><li style="margin-bottom:8px">Routes mounted via dynamic strings (computed prefixes, runtime registration, factory functions) are reported as UNRESOLVED rather than guessed.</li><li style="margin-bottom:8px">ApiGate uses a built-in heuristic pattern list to mark common public-auth paths (login / signup / refresh / health / OAuth callbacks) as INTENTIONAL-PUBLIC. The heuristic is deterministic and configurable but can be wrong both ways — review the marked endpoints and override `publicAuthPatterns` in `.apigate.config.json` if your project disagrees.</li><li style="margin-bottom:8px">The per-endpoint `risk` tier (HIGH / MED / LOW) is a heuristic — pattern-based, frozen at `riskTier.version`. Use `severityOverrides` to pin specific endpoints. Risk is a triage aid, not a runtime exploitability claim.</li><li style="margin-bottom:8px">ApiGate makes ZERO network calls. It does not send code, telemetry, or scan artifacts anywhere. Reports are written to local files only.</li></ol>
   </section>
+
+    <script>
+(function(){
+  var section = document.getElementById('endpoints');
+  if (!section) return;
+  var table = section.querySelector('table');
+  if (!table) return;
+  var input = document.getElementById('endpoint-filter');
+  if (!input) return;
+  var tbody = table.querySelector('tbody') || table;
+  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+
+  function applyFilter(q) {
+    var needle = (q || '').toLowerCase();
+    var shown = 0;
+    rows.forEach(function(row) {
+      var text = row.textContent.toLowerCase();
+      var match = needle === '' || text.indexOf(needle) !== -1;
+      row.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    var counter = document.getElementById('endpoint-filter-count');
+    if (counter) counter.textContent = shown + ' / ' + rows.length + ' visible';
+  }
+
+  function parseHash() {
+    var h = (location.hash || '').replace(/^#/, '');
+    var out = {};
+    h.split('&').forEach(function(p) {
+      var i = p.indexOf('=');
+      if (i > 0) out[decodeURIComponent(p.slice(0, i))] = decodeURIComponent(p.slice(i + 1));
+    });
+    return out;
+  }
+  function writeHash(state) {
+    var parts = [];
+    Object.keys(state).sort().forEach(function(k) {
+      if (state[k] !== '' && state[k] != null) parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(state[k]));
+    });
+    var h = parts.join('&');
+    if (h) history.replaceState(null, '', '#' + h);
+    else history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  var hash = parseHash();
+  if (hash.filter) { input.value = hash.filter; applyFilter(hash.filter); } else applyFilter('');
+
+  input.addEventListener('input', function() {
+    applyFilter(input.value);
+    var h = parseHash();
+    h.filter = input.value;
+    writeHash(h);
+  });
+
+  var headers = Array.prototype.slice.call(table.querySelectorAll('thead th, th'));
+  headers.forEach(function(th, i) {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', function() {
+      var dir = th.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
+      headers.forEach(function(h) { h.removeAttribute('data-sort'); h.textContent = h.textContent.replace(/[ ▲▼]+$/, ''); });
+      th.setAttribute('data-sort', dir);
+      th.textContent = th.textContent.replace(/[ ▲▼]+$/, '') + (dir === 'asc' ? ' ▲' : ' ▼');
+      var sorted = rows.slice().sort(function(a, b) {
+        var av = (a.children[i] && a.children[i].textContent || '').trim();
+        var bv = (b.children[i] && b.children[i].textContent || '').trim();
+        if (av === bv) return 0;
+        var an = Number(av), bn = Number(bv);
+        if (!isNaN(an) && !isNaN(bn)) return dir === 'asc' ? an - bn : bn - an;
+        return dir === 'asc' ? (av < bv ? -1 : 1) : (av < bv ? 1 : -1);
+      });
+      sorted.forEach(function(r) { tbody.appendChild(r); });
+      var h = parseHash();
+      h.sort = i + ':' + dir;
+      writeHash(h);
+    });
+  });
+
+  if (hash.sort) {
+    var parts = hash.sort.split(':');
+    var idx = parseInt(parts[0], 10);
+    var dir = parts[1] === 'desc' ? 'desc' : 'asc';
+    if (!isNaN(idx) && headers[idx]) {
+      if (dir === 'desc') headers[idx].setAttribute('data-sort', 'asc'); // toggle flips it
+      headers[idx].click();
+    }
+  }
+})();
+</script>
   
   </main>
 </div>

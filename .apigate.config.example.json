@@ -21,9 +21,10 @@
     "openReadMethods":   false,
     "unknown":           false,
     "drift":             false,
-    "intentionalPublic": false
+    "intentionalPublic": false,
+    "newOpenWrite":      true
   },
-  "_failOn": "Exit-code policy. openWriteMethods=true means an unauthenticated POST/PUT/PATCH/DELETE causes exit 1 (recommended). openReadMethods=true also fails on unauthenticated GET (strict). unknown=true fails when ApiGate cannot prove a discovered endpoint's posture. drift=true also fails on any spec-drift item. intentionalPublic=true makes the exit-1 gate ignore the public-auth heuristic — i.e. EVERY open endpoint fails (very strict; for compliance audits).",
+  "_failOn": "Exit-code policy. openWriteMethods=true means an unauthenticated POST/PUT/PATCH/DELETE causes exit 1 (recommended). openReadMethods=true also fails on unauthenticated GET (strict). unknown=true fails when ApiGate cannot prove a discovered endpoint's posture. drift=true also fails on any spec-drift item. intentionalPublic=true makes the exit-1 gate ignore the public-auth heuristic — i.e. EVERY open endpoint fails (very strict; for compliance audits). newOpenWrite=true (default ON, only meaningful when --diff is provided) fails when the PR adds any new OPEN write endpoint.",
 
   "publicAuthPatterns": null,
   "_publicAuthPatterns": "Override the built-in public-auth heuristic. null (default) uses DEFAULT_PUBLIC_AUTH_PATTERNS from lib/heuristics.mjs — common login/signup/refresh/health paths. Provide an array of { method, path } pairs to replace entirely, or an empty array [] to disable the heuristic. The exact-match list is deterministic: paths are normalized (`/users/:id` ↔ `/users/{id}` ↔ `/users/<id>`) before comparison.",
@@ -48,5 +49,5 @@
   "_excludePaths": "Glob list of files whose endpoints are excluded from the report. Applied AFTER parsing — does not speed up scanning.",
 
   "severityOverrides": [],
-  "_severityOverrides": "Reserved for future use — currently ApiGate only emits a single posture classification per endpoint."
+  "_severityOverrides": "Pin specific (method, path) pairs to a risk tier. Applied AFTER the default risk ladder. Example: [{ \"method\": \"POST\", \"path\": \"/admin/wipe\", \"risk\": \"LOW\", \"reason\": \"scheduled maintenance only\" }]. Match is exact on (method, path) — the path is matched against the resolved/normalized form ApiGate prints in the report."
 }

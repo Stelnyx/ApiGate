@@ -1,6 +1,6 @@
 {
   "name": "@stelnyx/apigate",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Tiny static API surface audit — enumerates HTTP endpoints, classifies auth posture, diffs against OpenAPI specs. Zero network, deterministic, one report.",
   "type": "module",
   "bin": {
@@ -48,7 +48,7 @@
     "provenance": true
   },
   "scripts": {
-    "test": "node test/parser-express.mjs && node test/parser-fastify.mjs && node test/parser-nest.mjs && node test/parser-openapi.mjs && node test/auth.mjs && node test/drift.mjs && node test/score.mjs && node test/config.mjs && node test/gate.mjs && node test/gates.mjs && node test/capabilities.mjs && node test/heuristics.mjs && node test/golden-apigate.mjs && node test/determinism.mjs && node test/report-theme-contract.mjs",
+    "test": "node test/parser-express.mjs && node test/parser-fastify.mjs && node test/parser-nest.mjs && node test/parser-openapi.mjs && node test/auth.mjs && node test/drift.mjs && node test/score.mjs && node test/risk.mjs && node test/diff.mjs && node test/filter.mjs && node test/explain.mjs && node test/config.mjs && node test/gate.mjs && node test/gates.mjs && node test/capabilities.mjs && node test/heuristics.mjs && node test/golden-apigate.mjs && node test/determinism.mjs && node test/report-theme-contract.mjs",
     "test:parsers": "node test/parser-express.mjs && node test/parser-fastify.mjs && node test/parser-nest.mjs && node test/parser-openapi.mjs",
     "test:auth": "node test/auth.mjs",
     "test:drift": "node test/drift.mjs",

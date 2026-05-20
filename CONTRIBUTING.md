@@ -44,6 +44,32 @@ npm run lint
 
 Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `security`, `perf`.
 
+## Flag discipline
+
+ApiGate aims for *few flags, each with a clear scenario*. Reviewers should
+be able to read `apigate --help` in 30 seconds. Before adding a CLI flag,
+the contribution must satisfy:
+
+1. **Scenario in one line.** Every new flag needs a one-sentence "developer
+   uses this when X" justification in its help text. If you can't write it,
+   the flag isn't ready.
+2. **Group it.** The `--help` output is grouped by purpose: **Output**,
+   **Investigation**, **Policy**, **Debug**. New flags slot into one of
+   those four groups. New groups need their own discussion.
+3. **No overlap with config.** If the flag has no scenario beyond
+   `.apigate.config.json`, make it config-only.
+4. **No overlap with env vars.** Use the `APIGATE_*` env-var convention
+   where it makes sense (e.g. `APIGATE_TIMESTAMP` replaces the now-removed
+   `--deterministic` flag in v0.2).
+5. **README quick-start stays 3 lines.** The first code block in
+   `README.md` shows `npx @stelnyx/apigate .` plus at most two examples.
+   Don't surface every flag upfront.
+6. **Errors over silence.** Unknown flag values throw — silent-ignore can
+   relax CI policy by accident.
+
+If a proposed flag doesn't pass all six, the PR will be asked to drop it
+or convert to a config field.
+
 ## Adding a new framework parser
 
 1. Add `lib/parsers/<name>.mjs` exporting `parse<Name>(targetDir, excludePaths) → { endpoints, warnings, specsDetected? }`.

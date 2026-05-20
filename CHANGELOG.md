@@ -6,6 +6,91 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) + [Semantic Ver
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-20
+
+### Added
+- **`--diff <ref>` flag — PR-aware scanning.** Spins a detached git worktree
+  at the resolved SHA, runs the same `buildInventory` + `classifyAll` +
+  risk pipeline against the base tree, and emits `refDiff` with four
+  buckets:
+  ```jsonc
+  "refDiff": {
+    "baseRef": "main",
+    "baseSha": "abc12345",
+    "added":           [{ "method": "POST", "path": "/admin/purge", "risk": "HIGH" }],
+    "removed":         [...],
+    "changedPosture":  [{ "method": "PUT", "path": "/x", "from": "GUARDED", "to": "OPEN" }],
+    "changedRisk":     [{ "method": "POST", "path": "/y", "from": "MED",   "to": "HIGH" }]
+  }
+  ```
+  Worktree cleanup runs unconditionally in a `finally`. Stale worktrees
+  from prior crashes are pruned at start.
+- **Risk tier per endpoint (`risk` + `riskReason`).** Deterministic ladder
+  using a frozen 9-token sensitive-path pattern list (`admin`, `auth`,
+  `billing`, `delete`, `internal`, `password`, `secret`, `token`,
+  `users`). HIGH at the top, MED in the middle, LOW at the bottom — the
+  endpoint table is now sorted risk-DESC by default so the actionable
+  surface lands first. Risk version locked at `v1`; see
+  `parserCapabilities.riskTier` in the JSON report.
+- **`--filter <expr>` flag — view-only narrowing.** Keys: `risk`,
+  `posture`, `framework`, `method`, `changed`. Multiple values per key
+  are OR; multiple keys are AND. Filter affects only the HTML endpoint
+  table — `summary`, `gate.reasons`, `headlineScore`, and exit code
+  always reflect the full scan. Unknown keys / values throw (CI typos
+  cannot silently relax policy).
+- **`--explain <method> <path>` flag.** Single-purpose evidence chain
+  printer — prints file:line, posture, marked auth identifier, risk +
+  reason, refDiff context, and OpenAPI presence for one endpoint. No
+  file writes, exit 0 always. Path normalization aligns `/users/:id`
+  with `/users/{id}` and `/users/<id>`.
+- **HTML filter + sort.** Vanilla JS (~50 LOC), no dependencies, no
+  `setInterval` / `Math.random` / `Date.now` / `fetch`. Text input above
+  the endpoint table filters rows by visible cells; column header clicks
+  toggle sort; filter + sort state mirrored to `location.hash` so links
+  survive page reloads. Theme contract test asserts the JS is the only
+  injected script and contains no non-deterministic primitives.
+- **`new-open-write` gate reason.** Fires when `--diff` is active and
+  the base→current diff added an OPEN write method. Default ON when
+  `--diff` is provided. `--fail-on new-open-write` token added.
+- **Risk override hook.** Existing reserved `config.severityOverrides`
+  field is now live — pin specific `(method, path)` pairs to a fixed
+  risk tier with a custom reason. Validated at config load.
+- New test suites: `test/risk.mjs`, `test/diff.mjs`, `test/filter.mjs`,
+  `test/explain.mjs`. Determinism + theme-contract tests gained
+  assertions for risk, filter, refDiff, and the JS injection.
+- New `parserCapabilities.riskTier` block + `report.riskVersion`
+  top-level key — consumers can read the rubric version that produced
+  the tier.
+
+### Changed
+- **HTML layout reorder.** Action material first, trust material last.
+  New section order: Overview → PR changes (only with `--diff`) → Gate →
+  Endpoints → Spec drift → Rubrics → Unknown reasons → ──── trust ────
+  → Parser capabilities → Limitations. Capabilities + Limitations were
+  moved BELOW the endpoint inventory so reviewers see the work surface
+  first. Sidebar nav reflects the new order.
+- **KPI grid prioritizes risk.** New "HIGH risk" + "MED risk" tiles at
+  the top of the grid. Score-hero sub-line is now
+  `HIGH · MED · LOW · status` instead of `guarded · open · unknown`.
+- **Endpoint table gets a "Risk" column** (between Framework and
+  Posture). Sorted risk-DESC, then method ASC, then path ASC.
+- **`--help` is grouped by purpose**: Output, Investigation, Policy,
+  Debug. `APIGATE_TIMESTAMP` env var now documented in `--help`.
+- **Limitations gains a 5th statement** disclosing the risk tier is a
+  pattern-based heuristic — not a runtime exploitability claim.
+
+### Removed
+- **`--deterministic` flag.** Overlapped with the `APIGATE_TIMESTAMP`
+  env var (which matches the `SOURCE_DATE_EPOCH` convention). Set the
+  env var in CI for byte-stable output. Non-breaking: no public scripts
+  passed the flag.
+
+### Flag count
+| Version | Flags |
+|---|---|
+| 0.1.2 | 8 (`--output-dir --format --fail-on --strip-paths --deterministic --debug --version --help`) |
+| 0.2.0 | 10 (drop `--deterministic`; add `--diff --filter --explain`) |
+
 ## [0.1.2] - 2026-05-19
 
 ### Added
