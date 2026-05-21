@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ApiGate — Static API surface audit · Express · Fastify · NestJS · OpenAPI</title>
+<meta name="description" content="ApiGate is a single-command static API surface audit. It enumerates every HTTP endpoint, classifies auth posture, diffs against OpenAPI specs, and produces one report and one exit code. 100% static — zero network, deterministic. MIT.">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ApiGate — Static API surface audit">
+<meta property="og:description" content="One command. One report. One exit code. Enumerates HTTP endpoints, classifies auth posture, diffs against OpenAPI specs. 100% static, deterministic, MIT.">
+<meta property="og:url" content="https://stelnyx.github.io/ApiGate/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%2300cc66' d='M50 2C54 38 62 46 98 50C62 54 54 62 50 98C46 62 38 54 2 50C38 46 46 38 50 2Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;
+  --surface:#141414;
+  --surface-2:#1a1a1a;
+  --border:#1f1f1f;
+  --border-bright:#2a2a2a;
+  --text:#e5e5e7;
+  --muted:#9a9aa0;
+  --faint:#6e6e73;
+  --green:#00cc66;
+  --green-bright:#00e676;
+  --amber:#ff9500;
+  --pink:#ff2d78;
+  --max-w:880px;
+  --radius:8px;
+  --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--green-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+code,.mono{font-family:var(--mono);font-size:.92em}
+main{max-width:var(--max-w);margin:0 auto;padding:8px 24px 96px}
+
+/* skip link */
+.skip{position:absolute;left:-999px}
+.skip:focus{left:16px;top:16px;background:var(--green);color:#04140b;padding:8px 14px;border-radius:6px;z-index:10}
+
+/* header */
+header{border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0d1410 0%,var(--bg) 70%);padding:72px 24px 64px}
+header .inner{max-width:var(--max-w);margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-bottom:36px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+.brand svg{width:22px;height:22px;flex-shrink:0}
+.brand .sep{color:var(--faint)}
+.brand .self{color:var(--green)}
+h1{font-size:46px;line-height:1.1;font-weight:700;letter-spacing:-.025em;margin-bottom:20px}
+h1 .accent{color:var(--green)}
+.lede{font-size:19px;color:var(--text);max-width:660px;margin-bottom:14px}
+.sub{font-size:15px;color:var(--muted);max-width:660px;margin-bottom:32px}
+.sub code{color:var(--text)}
+
+/* install block */
+.install{display:flex;align-items:center;gap:0;background:var(--surface);border:1px solid var(--border-bright);border-radius:var(--radius);max-width:420px;overflow:hidden;margin-bottom:24px}
+.install .cmd{flex:1;padding:14px 16px;font-family:var(--mono);font-size:14px;color:var(--text);white-space:nowrap;overflow:auto}
+.install .cmd .prompt{color:var(--green);user-select:none}
+.install button{background:var(--surface-2);border:none;border-left:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;padding:14px 16px;cursor:pointer;font-family:var(--font);letter-spacing:.04em}
+.install button:hover{color:var(--text);background:var(--border)}
+.install button.copied{color:var(--green)}
+
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .12s,background .12s}
+.btn-primary{background:var(--green);color:#04140b;box-shadow:0 0 24px rgba(0,204,102,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 0 32px rgba(0,204,102,.4);text-decoration:none}
+.btn-secondary{background:transparent;color:var(--text);border-color:var(--border-bright)}
+.btn-secondary:hover{background:var(--surface);text-decoration:none}
+
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.badges img{height:20px}
+.proof{font-size:13px;color:var(--muted);margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+.proof strong{color:var(--text);font-weight:600}
+
+/* sections */
+section{margin-top:64px}
+section h2{font-size:24px;font-weight:700;letter-spacing:-.015em;margin-bottom:8px}
+section .h2-note{font-size:14px;color:var(--faint);margin-bottom:24px}
+section>p{color:var(--muted);margin-bottom:16px;max-width:680px}
+section>p strong{color:var(--text);font-weight:600}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:8px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.card .num{font-family:var(--mono);font-size:12px;color:var(--green);font-weight:700;letter-spacing:.08em;margin-bottom:10px}
+.card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+.card p{font-size:14px;color:var(--muted);margin:0}
+
+/* score panel */
+.score{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px}
+.score .head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.score .head .n{font-size:38px;font-weight:700;letter-spacing:-.03em;color:var(--green)}
+.score .head .d{font-size:14px;color:var(--muted)}
+.score .head .band{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,204,102,.12);color:var(--green);padding:4px 10px;border-radius:4px}
+.bar-row{display:grid;grid-template-columns:130px 44px 1fr;align-items:center;gap:12px;padding:9px 0}
+.bar-row+.bar-row{border-top:1px solid var(--border)}
+.bar-row .name{font-size:13px;color:var(--text)}
+.bar-row .val{font-size:13px;color:var(--text);font-weight:600;font-family:var(--mono);text-align:right}
+.bar-row .track{height:7px;background:var(--border-bright);border-radius:4px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--green);border-radius:4px}
+.bar-row .fill.warn{background:var(--amber)}
+
+/* tables */
+.tbl{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);border-collapse:separate;border-spacing:0;overflow:hidden;font-size:14px}
+.tbl th{text-align:left;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+.tbl td{padding:13px 16px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td strong{color:var(--text);font-weight:600}
+.tbl code{background:var(--surface-2);padding:1px 6px;border-radius:3px;color:var(--text);font-size:.86em}
+
+/* checklist */
+ul.checks{list-style:none;padding:0;margin:0}
+ul.checks li{padding:12px 0;color:var(--muted);border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;font-size:14px}
+ul.checks li:last-child{border-bottom:none}
+ul.checks li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
+ul.checks li.no::before{content:"✕";color:var(--amber)}
+ul.checks li strong{color:var(--text);font-weight:600}
+
+/* code block */
+pre{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.65;color:var(--text)}
+pre .c{color:var(--faint)}
+pre .k{color:var(--green)}
+
+/* faq */
+.faq dt{font-weight:600;color:var(--text);margin-top:22px;font-size:15px}
+.faq dt:first-child{margin-top:0}
+.faq dd{color:var(--muted);margin:6px 0 0;font-size:14px}
+
+footer{margin-top:80px;padding-top:28px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+footer .line{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+footer .siblings a{color:var(--muted)}
+footer .meta{color:var(--faint)}
+
+@media (max-width:600px){
+  h1{font-size:32px}
+  .lede{font-size:17px}
+  header{padding:44px 20px 44px}
+  main{padding:0 20px 64px}
+  .bar-row{grid-template-columns:104px 40px 1fr;gap:8px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#what">Skip to content</a>
+
+<header>
+  <div class="inner">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path fill="#00cc66" d="M50 2C54 38 62 46 98 50C62 54 54 62 50 98C46 62 38 54 2 50C38 46 46 38 50 2Z"/></svg>
+      <span>Stelnyx</span><span class="sep">/</span><span class="self">ApiGate</span>
+    </div>
+    <h1>See every endpoint.<br>Know which ones are <span class="accent">open</span>.</h1>
+    <p class="lede">ApiGate is a single-command <strong>static API surface audit</strong>. It reads your source and OpenAPI specs on disk, inventories every HTTP endpoint, classifies its declared auth posture, diffs code against spec — and prints one report with one exit code.</p>
+    <p class="sub">Express · Fastify · NestJS · OpenAPI 2/3. <strong>100% static</strong> — no HTTP requests, no credentials, no running server. Zero network calls. Same input → byte-identical output.</p>
+
+    <div class="install" id="install">
+      <span class="cmd"><span class="prompt">$ </span><span id="cmd-text">npx @stelnyx/apigate .</span></span>
+      <button id="copy-btn" type="button" aria-label="Copy install command">Copy</button>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://www.npmjs.com/package/@stelnyx/apigate">View on npm</a>
+      <a class="btn btn-secondary" href="https://github.com/Stelnyx/ApiGate">GitHub repo</a>
+      <a class="btn btn-secondary" href="https://github.com/Stelnyx/ApiGate#readme">Read the docs</a>
+    </div>
+
+    <div class="badges">
+      <a href="https://www.npmjs.com/package/@stelnyx/apigate"><img alt="npm version" src="https://img.shields.io/npm/v/@stelnyx/apigate.svg?style=flat-square&labelColor=0a0a0a&color=00cc66"></a>
+      <a href="https://github.com/Stelnyx/ApiGate/blob/main/LICENSE"><img alt="license MIT" src="https://img.shields.io/badge/license-MIT-00cc66.svg?style=flat-square&labelColor=0a0a0a"></a>
+      <img alt="node >=18" src="https://img.shields.io/badge/node-%E2%89%A518-00cc66.svg?style=flat-square&labelColor=0a0a0a">
+      <img alt="npm provenance signed" src="https://img.shields.io/badge/npm%20provenance-signed-00cc66.svg?style=flat-square&labelColor=0a0a0a">
+    </div>
+
+    <p class="proof">Dogfooded against real public codebases each release — <strong>Immich</strong> (255 endpoints, NestJS), <strong>Ghost</strong> (303, Express), and a 423-endpoint private production NestJS app. Early release <code>v0.3.0</code>, published with npm provenance.</p>
+  </div>
+</header>
+
+<main>
+
+<section id="what">
+  <h2>One command. Three artifacts.</h2>
+  <p class="h2-note">ApiGate walks a directory and produces exactly this — nothing runs, nothing phones home.</p>
+  <div class="grid">
+    <div class="card">
+      <div class="num">01</div>
+      <h3>One JSON report</h3>
+      <p>Every endpoint, its auth posture, drift bucket, five 0–100 rubrics, and a headline score — machine-readable for CI dashboards.</p>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <h3>One HTML report</h3>
+      <p>Self-contained, zero external assets. Rendered through <code>@stelnyx/report-theme</code> — identical to every Stelnyx surface.</p>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <h3>One exit code</h3>
+      <p><code>0</code> clean · <code>1</code> on open-write endpoints (configurable). Blocks the pipeline — no dashboard babysitting.</p>
+    </div>
+  </div>
+</section>
+
+<section id="score">
+  <h2>Headline Score</h2>
+  <p class="h2-note">Every run scores the API surface 0–100 — the mean of five rubrics. Sample below.</p>
+  <div class="score">
+    <div class="head">
+      <span class="n">86</span><span class="d">/ 100 &nbsp;·&nbsp; rubric v1</span>
+      <span class="band">Strong</span>
+    </div>
+    <div class="bar-row"><span class="name">Inventory</span><span class="val">86</span><span class="track"><span class="fill" style="width:86%"></span></span></div>
+    <div class="bar-row"><span class="name">Auth Coverage</span><span class="val">67</span><span class="track"><span class="fill warn" style="width:67%"></span></span></div>
+    <div class="bar-row"><span class="name">Open Risk</span><span class="val">85</span><span class="track"><span class="fill" style="width:85%"></span></span></div>
+    <div class="bar-row"><span class="name">Spec Drift</span><span class="val">90</span><span class="track"><span class="fill" style="width:90%"></span></span></div>
+    <div class="bar-row"><span class="name">Determinism</span><span class="val">100</span><span class="track"><span class="fill" style="width:100%"></span></span></div>
+  </div>
+  <p style="margin-top:16px">Bands: <strong>Strong ≥ 85</strong>, Good ≥ 70, Mixed ≥ 50, Weak &lt; 50. The binary gate (exit 1 on open-write methods) is independent of the score — the number is for trend tracking, the exit code blocks CI.</p>
+</section>
+
+<section id="frameworks">
+  <h2>Frameworks it reads</h2>
+  <p class="h2-note">Routes it can't statically resolve are emitted as <code>UNRESOLVED</code> — never guessed.</p>
+  <table class="tbl">
+    <thead><tr><th>Framework</th><th>How it's parsed</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Express</strong></td><td>acorn AST for <code>.js/.mjs/.cjs</code>; regex fallback for <code>.ts/.tsx</code>. Resolves <code>app.use('/prefix', router)</code> mounts in the same file.</td></tr>
+      <tr><td><strong>Fastify</strong></td><td>acorn AST. Handles <code>fastify.&lt;method&gt;(...)</code> and <code>fastify.route({ method, url, preHandler })</code>.</td></tr>
+      <tr><td><strong>NestJS</strong></td><td>Decorator extraction. Pairs <code>@Controller</code> with method decorators; captures class- and method-level guards (<code>@UseGuards</code>, <code>@Auth</code>, <code>@Roles</code>).</td></tr>
+      <tr><td><strong>OpenAPI</strong></td><td>Parses <code>*.yaml/*.yml/*.json</code> with <code>swagger:</code> (2.0) or <code>openapi:</code> (3.x) root. Honors operation-level <code>security</code> + root inheritance.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="honesty">
+  <h2>What this does <em>not</em> prove</h2>
+  <p>ApiGate is a <strong>surface auditor</strong>, not a runtime scanner or a DAST tool. The report renders this section in every run — it's a printed trust feature, never hidden behind a toggle.</p>
+  <ul class="checks">
+    <li class="no"><strong>Static analysis cannot verify runtime authorization.</strong> BOLA / object-level access correctness is invisible to ApiGate — it inspects declared posture, not middleware behavior.</li>
+    <li class="no"><strong>A declared guard is not a correct guard.</strong> An endpoint with an auth identifier in its chain is classified <code>GUARDED</code>; the middleware may still be misconfigured or bypassable at runtime.</li>
+    <li class="no"><strong>Dynamic mounts are reported, not guessed.</strong> Computed prefixes and runtime registration surface as <code>UNRESOLVED</code> and count against the Inventory rubric.</li>
+    <li><strong>Public-by-design endpoints are handled honestly.</strong> Login / signup / refresh / health / OAuth callbacks are matched by a deterministic, configurable heuristic — visible, not silently dropped.</li>
+    <li><strong>Zero network calls — unconditional.</strong> No telemetry, no account, no phone-home, no spec fetching from URLs. Air-gapped CI works exactly like a laptop.</li>
+  </ul>
+  <p style="margin-top:16px">Need runtime authorization testing? Use a dynamic scanner. ApiGate <em>complements</em> DAST tooling — it does not replace it.</p>
+</section>
+
+<section id="ci">
+  <h2>Drop it into CI</h2>
+  <p>Exit <code>1</code> on open-write endpoints blocks the pipeline by default. One line:</p>
+  <pre><span class="c"># .github/workflows/apigate.yml</span>
+- name: Run ApiGate
+  <span class="k">run:</span> npx @stelnyx/apigate .
+  <span class="c"># exits 1 on open write endpoints — blocks the pipeline</span></pre>
+  <p style="margin-top:14px">Tighten the gate without editing config: <code>--fail-on open-write,unknown,drift,missing-spec</code>. PR-aware: <code>--diff main</code> flags routes <em>this branch</em> made unauthenticated. Unknown <code>--fail-on</code> tokens throw — a CI typo can never silently relax policy.</p>
+</section>
+
+<section id="faq" class="faq">
+  <h2>Common questions</h2>
+  <dl>
+    <dt>Does my code leave my machine?</dt>
+    <dd>No. ApiGate makes zero network calls — no telemetry, no account, no phone-home. It reads files on disk and writes report files locally. That's unconditional, not a flag.</dd>
+    <dt>Is it deterministic?</dt>
+    <dd>Yes. Same inputs produce JSON- and HTML-byte-identical reports across every run. Three test suites lock the contract — <code>determinism.mjs</code>, <code>golden-apigate.mjs</code>, and a report-theme contract test.</dd>
+    <dt>Is this AI?</dt>
+    <dd>No. ApiGate is deterministic static analysis over acorn ASTs and decorator extraction — no LLM, no model, no inference. Every classification is explainable from the parsed source.</dd>
+    <dt>Will it flag my login endpoint as a failure?</dt>
+    <dd>No. A deterministic, exact-match heuristic marks public-by-design paths (login / signup / refresh / health / OAuth callbacks) and excludes them from the gate. The list is fully overridable in <code>.apigate.config.json</code>.</dd>
+    <dt>What does it cost?</dt>
+    <dd>Nothing. MIT licensed, published on npm with provenance. <code>npx @stelnyx/apigate .</code> and you're done.</dd>
+  </dl>
+</section>
+
+<section id="start">
+  <h2>Audit your API surface now</h2>
+  <p>No install, no signup, no config required. Point it at a directory.</p>
+  <div class="install" style="margin-top:8px">
+    <span class="cmd"><span class="prompt">$ </span>npx @stelnyx/apigate .</span>
+  </div>
+  <div class="cta-row" style="margin-top:8px">
+    <a class="btn btn-primary" href="https://www.npmjs.com/package/@stelnyx/apigate">View on npm</a>
+    <a class="btn btn-secondary" href="https://github.com/Stelnyx/ApiGate">Star on GitHub</a>
+  </div>
+</section>
+
+<footer>
+  <div class="line siblings">
+    <span class="meta">Part of the Stelnyx line:</span>
+    <a href="https://github.com/Stelnyx/LuxScope">LuxScope</a>
+    <a href="https://github.com/Stelnyx/LuxFaber">LuxFaber</a>
+    <a href="https://github.com/Stelnyx/SecGate">SecGate</a>
+    <span class="self" style="color:var(--green)">ApiGate</span>
+  </div>
+  <div class="meta">ApiGate is open source under the MIT license · <a href="https://github.com/Stelnyx/ApiGate">github.com/Stelnyx/ApiGate</a> · Report vulnerabilities via <a href="https://github.com/Stelnyx/ApiGate/blob/main/SECURITY.md">SECURITY.md</a></div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  var btn=document.getElementById('copy-btn'),txt=document.getElementById('cmd-text');
+  if(!btn||!txt)return;
+  btn.addEventListener('click',function(){
+    var s=txt.textContent;
+    function done(){btn.textContent='Copied';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied');},1600);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(done,done);}
+    else{var t=document.createElement('textarea');t.value=s;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(t);done();}
+  });
+})();
+</script>
+</body>
+</html>
